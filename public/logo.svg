@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="50%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="bottleGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="dropGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="sunGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded Squircle Badge for Any Display -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bgGrad2)"/>
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="none" stroke="#60a5fa" stroke-width="4" opacity="0.3"/>
+
+  <!-- Subtle glow -->
+  <circle cx="256" cy="256" r="170" fill="#60a5fa" opacity="0.15"/>
+
+  <!-- Morning & Evening celestial accents -->
+  <g transform="translate(136, 120)">
+    <circle cx="0" cy="0" r="16" fill="url(#sunGrad2)"/>
+    <path d="M0 -22 L0 -26 M0 22 L0 26 M-22 0 L-26 0 M22 0 L26 0 M-15 -15 L-18 -18 M15 15 L18 18 M-15 15 L-18 18 M15 -15 L18 -18" stroke="#fde047" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(376, 122)">
+    <path d="M 0 -14 A 14 14 0 1 1 -14 0 A 11 11 0 0 0 0 -14 Z" fill="#e0e7ff" opacity="0.9"/>
+    <circle cx="16" cy="-8" r="3" fill="#ffffff"/>
+  </g>
+
+  <!-- Main Milk Bottle Symbol -->
+  <g filter="url(#shadow2)">
+    <rect x="230" y="96" width="52" height="18" rx="6" fill="#38bdf8"/>
+    <rect x="222" y="114" width="68" height="14" rx="5" fill="#e2e8f0"/>
+    <path d="M 232 128 L 232 152 Q 232 176 196 200 L 192 204 Q 172 220 172 250 L 172 380 Q 172 404 196 404 L 316 404 Q 340 404 340 380 L 340 250 Q 340 220 320 204 L 316 200 Q 280 176 280 152 L 280 128 Z" fill="url(#bottleGrad2)" stroke="#cbd5e1" stroke-width="4"/>
+
+    <path d="M 180 256 Q 220 268 256 256 T 332 256 L 332 376 Q 332 396 314 396 L 198 396 Q 180 396 180 376 Z" fill="#ffffff"/>
+
+    <line x1="188" y1="280" x2="212" y2="280" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="188" y1="310" x2="204" y2="310" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+    <line x1="188" y1="340" x2="212" y2="340" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="188" y1="370" x2="204" y2="370" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+
+    <g transform="translate(262, 332)">
+      <path d="M 0 -36 C -18 -12 -24 6 -24 18 C -24 31 -13 42 0 42 C 13 42 24 31 24 18 C 24 6 18 -12 0 -36 Z" fill="url(#dropGrad2)"/>
+      <ellipse cx="-7" cy="14" rx="4" ry="10" transform="rotate(-25 -7 14)" fill="#ffffff" opacity="0.6"/>
+    </g>
+
+    <path d="M 326 254 L 326 376 Q 326 386 318 390 Q 324 380 324 366 L 324 256 Q 324 235 310 220 L 306 216 Q 274 190 274 152 L 274 130 L 278 130 L 278 152 Q 278 186 312 212 L 316 216 Q 326 226 326 254 Z" fill="#ffffff" opacity="0.35"/>
+  </g>
+
+  <text x="256" y="446" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="800" fill="#ffffff" letter-spacing="2">MILKTRACK</text>
+</svg>
