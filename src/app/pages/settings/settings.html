@@ -1,0 +1,150 @@
+<div class="settings-page">
+  <div class="page-header">
+    <h2>⚙️ Settings</h2>
+  </div>
+
+  @if (message()) {
+    <div class="toast-banner" [class.error]="messageType() === 'error'">
+      {{ message() }}
+    </div>
+  }
+
+  <!-- Preferences Section -->
+  <div class="card">
+    <div class="card-title">Preferences</div>
+
+    <div class="field-group">
+      <label>Default Rate (₹ / Litre)</label>
+      <div class="input-with-symbol">
+        <span class="symbol">{{ currencySymbol() }}</span>
+        <input
+          type="number"
+          [ngModel]="defaultRate()"
+          (ngModelChange)="defaultRate.set($event)"
+          step="0.5"
+          min="1"
+          inputmode="decimal"
+          class="input-field" />
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Currency</label>
+      <div class="currency-row">
+        <input
+          type="text"
+          [ngModel]="currencySymbol()"
+          (ngModelChange)="currencySymbol.set($event)"
+          placeholder="₹"
+          maxlength="4"
+          class="input-field symbol-input" />
+        <input
+          type="text"
+          [ngModel]="currency()"
+          (ngModelChange)="currency.set($event)"
+          placeholder="INR"
+          class="input-field text-input" />
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Unit</label>
+      <input
+        type="text"
+        [ngModel]="unit()"
+        (ngModelChange)="unit.set($event)"
+        class="input-field" />
+    </div>
+
+    <button class="btn-primary" (click)="saveSettings()">Save Preferences</button>
+  </div>
+
+  <!-- Backup & Restore Section -->
+  <div class="card">
+    <div class="card-title">Backup & Restore</div>
+    <p class="section-desc">Keep your data safe by exporting backups to your mobile device.</p>
+
+    <div class="actions-grid">
+      <button class="btn-action export-btn" (click)="exportBackup()">
+        <span class="btn-icon">💾</span>
+        <span>Export Backup (JSON)</span>
+      </button>
+
+      <label class="btn-action import-btn">
+        <span class="btn-icon">📥</span>
+        <span>Import Backup (JSON)</span>
+        <input
+          type="file"
+          accept=".json,application/json"
+          (change)="onFileSelected($event)"
+          style="display: none;" />
+      </label>
+
+      <button class="btn-action csv-btn" (click)="exportCSV()">
+        <span class="btn-icon">📊</span>
+        <span>Export CSV (Excel)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Management Section -->
+  <div class="card danger-card">
+    <div class="card-title">Data Management</div>
+    <div class="stat-info">
+      <span>Total Records in Storage:</span>
+      <strong>{{ totalRecords() }}</strong>
+    </div>
+
+    <button class="btn-danger" (click)="promptClearData()">
+      🗑️ Clear All Data
+    </button>
+  </div>
+
+  <!-- Import Confirmation Dialog -->
+  @if (showImportConfirm()) {
+    <div class="overlay" (click)="cancelImport()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-icon">⚠️</div>
+        <h3>Restore Backup?</h3>
+        <p>This will replace all current records with the records from the backup file.</p>
+        <p class="highlight-warn">Found {{ pendingBackupData?.records?.length || 0 }} records in backup.</p>
+        <div class="dialog-actions">
+          <button class="btn-dialog btn-confirm" (click)="confirmImport()">Restore Now</button>
+          <button class="btn-dialog btn-cancel" (click)="cancelImport()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Clear All Data Step 1 Dialog -->
+  @if (showClearConfirmStep1()) {
+    <div class="overlay" (click)="cancelClear()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-icon">⚠️</div>
+        <h3>Clear All Data?</h3>
+        <p>Are you sure you want to delete all {{ totalRecords() }} milk records?</p>
+        <p class="highlight-warn">All your historical entries will be deleted from IndexedDB.</p>
+        <div class="dialog-actions">
+          <button class="btn-dialog btn-danger-action" (click)="proceedToClearStep2()">Yes, Continue</button>
+          <button class="btn-dialog btn-cancel" (click)="cancelClear()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Clear All Data Step 2 Dialog -->
+  @if (showClearConfirmStep2()) {
+    <div class="overlay" (click)="cancelClear()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-icon">🚨</div>
+        <h3>FINAL CONFIRMATION</h3>
+        <p>This action is <strong>PERMANENT and CANNOT be undone</strong>.</p>
+        <p>Confirm again to wipe everything:</p>
+        <div class="dialog-actions">
+          <button class="btn-dialog btn-danger-action" (click)="executeClearAll()">Permanently Delete All Data</button>
+          <button class="btn-dialog btn-cancel" (click)="cancelClear()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

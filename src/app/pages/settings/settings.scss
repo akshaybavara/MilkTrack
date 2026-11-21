@@ -1,0 +1,282 @@
+.settings-page {
+  padding: 16px;
+  padding-bottom: 110px;
+}
+
+.page-header {
+  margin-bottom: 16px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+  }
+}
+
+.toast-banner {
+  background: #2e7d32;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-in-out;
+
+  &.error {
+    background: #d32f2f;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  &.danger-card {
+    border: 1px solid #ffebee;
+    background: #fffafa;
+  }
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 16px 0;
+}
+
+.field-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.input-with-symbol {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .symbol {
+    position: absolute;
+    left: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #666;
+  }
+
+  .input-field {
+    padding-left: 36px;
+  }
+}
+
+.currency-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+
+  .symbol-input {
+    text-align: center;
+    font-weight: 700;
+  }
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #2196f3;
+  }
+}
+
+.btn-primary {
+  width: 100%;
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  margin-top: 6px;
+
+  &:active {
+    background: #1976d2;
+    transform: scale(0.98);
+  }
+}
+
+.actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: #f5f7fb;
+  border: 1.5px solid #e1e6f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c3e50;
+  cursor: pointer;
+  touch-action: manipulation;
+  text-decoration: none;
+  box-sizing: border-box;
+
+  &:active {
+    background: #e7ecf5;
+  }
+
+  .btn-icon {
+    font-size: 18px;
+  }
+}
+
+.stat-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 14px;
+
+  strong {
+    font-size: 18px;
+    color: #111;
+  }
+}
+
+.btn-danger {
+  width: 100%;
+  background: #fff;
+  color: #d32f2f;
+  border: 1.5px solid #d32f2f;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+
+  &:active {
+    background: #ffebee;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.dialog {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+  .dialog-icon {
+    font-size: 38px;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  p {
+    font-size: 14px;
+    color: #666;
+    margin: 6px 0;
+  }
+
+  .highlight-warn {
+    color: #d32f2f;
+    font-weight: 600;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-dialog {
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+
+  &.btn-confirm {
+    background: #2196f3;
+    color: #fff;
+  }
+
+  &.btn-danger-action {
+    background: #d32f2f;
+    color: #fff;
+  }
+
+  &.btn-cancel {
+    background: #f0f0f0;
+    color: #555;
+  }
+}

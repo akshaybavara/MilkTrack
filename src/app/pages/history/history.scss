@@ -1,0 +1,272 @@
+.history {
+  padding: 16px;
+  padding-bottom: 110px;
+}
+
+.page-header {
+  margin-bottom: 18px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+
+  .empty-icon {
+    font-size: 52px;
+    margin-bottom: 14px;
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: #334155;
+  }
+
+  .hint {
+    font-size: 14px;
+    font-weight: 500;
+    color: #94a3b8;
+  }
+}
+
+.day-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.day-header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+
+  .day-date {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e293b;
+  }
+}
+
+.record-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed #f1f5f9;
+
+  .session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 140px;
+
+    .session-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .calc-detail {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+  }
+
+  .record-amount {
+    font-size: 17px;
+    font-weight: 800;
+    color: #15803d;
+    margin-left: auto;
+    margin-right: 12px;
+  }
+
+  .record-actions {
+    display: flex;
+    gap: 6px;
+
+    .btn-icon {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-size: 14px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+
+      &:active {
+        background: #e2e8f0;
+        transform: scale(0.92);
+      }
+    }
+  }
+}
+
+.missing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #f1f5f9;
+
+  .missing-text {
+    font-size: 13px;
+    color: #94a3b8;
+
+    em {
+      font-style: italic;
+    }
+  }
+
+  .btn-quick-add {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    &:active {
+      background: #e2e8f0;
+    }
+  }
+}
+
+.day-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  margin-top: 4px;
+
+  .total-label {
+    font-size: 14px;
+    color: #475569;
+
+    strong {
+      color: #0f172a;
+      font-size: 16px;
+    }
+  }
+
+  .day-total-amount {
+    font-size: 18px;
+    color: #16a34a;
+    font-weight: 800;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.dialog {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 24px;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+  .dialog-icon {
+    font-size: 38px;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px;
+  }
+
+  .dialog-subtitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    margin: 0 0 8px;
+  }
+
+  .dialog-details {
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #334155;
+    margin: 0 0 12px;
+  }
+
+  .warn-text {
+    font-size: 13px;
+    color: #ef4444;
+    margin: 0 0 16px;
+    font-weight: 600;
+  }
+}
+
+.dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn-dialog {
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  touch-action: manipulation;
+
+  &.btn-delete {
+    background: #ef4444;
+    color: #ffffff;
+
+    &:active {
+      background: #dc2626;
+    }
+  }
+
+  &.btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+
+    &:active {
+      background: #e2e8f0;
+    }
+  }
+}

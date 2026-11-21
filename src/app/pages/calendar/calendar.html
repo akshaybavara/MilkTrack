@@ -1,0 +1,126 @@
+<div class="calendar-page">
+  <div class="page-header">
+    <h2>📅 Calendar</h2>
+  </div>
+
+  <!-- Month Navigation -->
+  <div class="month-nav">
+    <button class="nav-btn" (click)="prevMonth()" aria-label="Previous Month">◀</button>
+    <span class="month-label">{{ monthLabel() }}</span>
+    <button class="nav-btn" (click)="nextMonth()" aria-label="Next Month">▶</button>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="calendar-container">
+    <div class="calendar-grid">
+      @for (day of weekDays; track day) {
+        <div class="weekday-header">{{ day }}</div>
+      }
+      @for (day of calendarDays(); track $index) {
+        <div
+          class="calendar-cell"
+          [class.current-month]="day.isCurrentMonth"
+          [class.today]="day.isToday"
+          [class.has-both]="day.status === 'both'"
+          [class.has-partial]="day.status === 'partial'"
+          (click)="selectDay(day)">
+          @if (day.date > 0) {
+            <span class="day-num">{{ day.date }}</span>
+            <span class="status-indicator">
+              @switch (day.status) {
+                @case ('both') { 🟢 }
+                @case ('partial') { 🟡 }
+                @default { ⚪ }
+              }
+            </span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-card">
+    <div class="legend-item">
+      <span class="dot">🟢</span>
+      <span class="desc">Both sessions</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot">🟡</span>
+      <span class="desc">One session</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot">⚪</span>
+      <span class="desc">No record</span>
+    </div>
+  </div>
+
+  <!-- Day Detail Bottom Sheet / Modal -->
+  @if (showDetail()) {
+    <div class="overlay" (click)="closeDetail()">
+      <div class="detail-sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-header">
+          <div class="header-titles">
+            <span class="sheet-tag">Day Details</span>
+            <h3>{{ formatSelectedDate() }}</h3>
+          </div>
+          <button class="btn-close" (click)="closeDetail()" aria-label="Close">✕</button>
+        </div>
+
+        @if (selectedRecords().length === 0) {
+          <div class="empty-day">
+            <div class="empty-icon">⚪</div>
+            <p>No records for this date</p>
+            <div class="add-action-buttons">
+              <button class="btn-sheet-add morning" (click)="addForDate('Morning')">
+                🌅 Add Morning
+              </button>
+              <button class="btn-sheet-add evening" (click)="addForDate('Evening')">
+                🌆 Add Evening
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="records-list">
+            @for (rec of selectedRecords(); track rec.id) {
+              <div class="detail-record-card">
+                <div class="record-top">
+                  <div class="session-badge" [class.morning]="rec.session === 'Morning'" [class.evening]="rec.session === 'Evening'">
+                    {{ rec.session === 'Morning' ? '🌅 Morning' : '🌆 Evening' }}
+                  </div>
+                  <button class="btn-edit-icon" (click)="editRecord(rec)">✏️ Edit</button>
+                </div>
+                <div class="record-calc">
+                  <span class="formula">{{ rec.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ rec.ratePerLitre }}</span>
+                  <span class="total-amt">{{ settings()?.currencySymbol || '₹' }}{{ rec.amount }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Quick Add for Missing Sessions -->
+          @if (!hasMorning() || !hasEvening()) {
+            <div class="missing-actions">
+              @if (!hasMorning()) {
+                <button class="btn-missing-add" (click)="addForDate('Morning')">
+                  + Add Morning
+                </button>
+              }
+              @if (!hasEvening()) {
+                <button class="btn-missing-add" (click)="addForDate('Evening')">
+                  + Add Evening
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Day Summary Total -->
+          <div class="sheet-day-total">
+            <span>Total Milk: <strong>{{ dayTotalQuantity() }} L</strong></span>
+            <span class="total-cost">{{ settings()?.currencySymbol || '₹' }}{{ dayTotalAmount() }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

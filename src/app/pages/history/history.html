@@ -1,0 +1,89 @@
+<div class="history">
+  <div class="page-header">
+    <h2>📋 History</h2>
+  </div>
+
+  @if (days().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🥛</div>
+      <p>No records found</p>
+      <p class="hint">Tap + Add Milk to record your first entry</p>
+    </div>
+  }
+
+  @for (day of days(); track day.date) {
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-date">{{ formatDate(day.date) }}</span>
+      </div>
+
+      <!-- Morning Session Row -->
+      @if (day.morning) {
+        <div class="record-row">
+          <div class="session-info">
+            <span class="session-label">Morning</span>
+            <span class="calc-detail">{{ day.morning.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ day.morning.ratePerLitre }}</span>
+          </div>
+          <span class="record-amount">{{ settings()?.currencySymbol || '₹' }}{{ day.morning.amount }}</span>
+          <div class="record-actions">
+            <button class="btn-icon" (click)="editRecord(day.morning)" aria-label="Edit Morning Record">✏️</button>
+            <button class="btn-icon" (click)="confirmDelete(day.morning)" aria-label="Delete Morning Record">🗑️</button>
+          </div>
+        </div>
+      } @else {
+        <div class="missing-row">
+          <span class="missing-text">Morning: <em>Not recorded</em></span>
+          <button class="btn-quick-add" (click)="addMissingSession(day.date, 'Morning')">+ Add</button>
+        </div>
+      }
+
+      <!-- Evening Session Row -->
+      @if (day.evening) {
+        <div class="record-row">
+          <div class="session-info">
+            <span class="session-label">Evening</span>
+            <span class="calc-detail">{{ day.evening.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ day.evening.ratePerLitre }}</span>
+          </div>
+          <span class="record-amount">{{ settings()?.currencySymbol || '₹' }}{{ day.evening.amount }}</span>
+          <div class="record-actions">
+            <button class="btn-icon" (click)="editRecord(day.evening)" aria-label="Edit Evening Record">✏️</button>
+            <button class="btn-icon" (click)="confirmDelete(day.evening)" aria-label="Delete Evening Record">🗑️</button>
+          </div>
+        </div>
+      } @else {
+        <div class="missing-row">
+          <span class="missing-text">Evening: <em>Not recorded</em></span>
+          <button class="btn-quick-add" (click)="addMissingSession(day.date, 'Evening')">+ Add</button>
+        </div>
+      }
+
+      <!-- Day Total -->
+      <div class="day-total">
+        <span class="total-label">Total: <strong>{{ day.totalQuantity }} L</strong></span>
+        <span class="day-total-amount">{{ settings()?.currencySymbol || '₹' }}{{ day.totalAmount }}</span>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Confirmation Dialog -->
+  @if (showDeleteDialog()) {
+    <div class="overlay" (click)="cancelDelete()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-icon">🗑️</div>
+        <h3>Delete Record?</h3>
+        <p class="dialog-subtitle">
+          {{ deleteTarget()?.date }} • {{ deleteTarget()?.session }}
+        </p>
+        <p class="dialog-details">
+          {{ deleteTarget()?.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ deleteTarget()?.ratePerLitre }}
+          = <strong>{{ settings()?.currencySymbol || '₹' }}{{ deleteTarget()?.amount }}</strong>
+        </p>
+        <p class="warn-text">Are you sure you want to delete this record?</p>
+        <div class="dialog-actions">
+          <button class="btn-dialog btn-delete" (click)="doDelete()">Delete</button>
+          <button class="btn-dialog btn-cancel" (click)="cancelDelete()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

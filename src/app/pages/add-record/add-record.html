@@ -1,0 +1,148 @@
+<div class="add-record">
+  <!-- Header -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goBack()" aria-label="Go Back">←</button>
+    <h2>{{ isEditing() ? 'Edit Milk Record' : '+ Add Milk' }}</h2>
+  </div>
+
+  <div class="form-container">
+    <!-- Date -->
+    <div class="field-group">
+      <label>Date</label>
+      <input
+        type="date"
+        [ngModel]="date()"
+        (ngModelChange)="date.set($event)"
+        class="input-field date-input" />
+    </div>
+
+    <!-- Session -->
+    <div class="field-group">
+      <label>Session</label>
+      <div class="session-buttons">
+        <button
+          type="button"
+          class="session-btn morning"
+          [class.active]="session() === 'Morning'"
+          (click)="selectSession('Morning')">
+          <span class="btn-icon">🌅</span>
+          <span class="btn-label">Morning</span>
+        </button>
+        <button
+          type="button"
+          class="session-btn evening"
+          [class.active]="session() === 'Evening'"
+          (click)="selectSession('Evening')">
+          <span class="btn-icon">🌆</span>
+          <span class="btn-label">Evening</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quantity -->
+    <div class="field-group">
+      <div class="label-row">
+        <label>Quantity (Litres)</label>
+        @if (quantity()) {
+          <span class="active-val">{{ quantity() }} L</span>
+        }
+      </div>
+
+      <!-- Quick Chips -->
+      <div class="quick-chips">
+        @for (q of quickQuantities; track q) {
+          <button
+            type="button"
+            class="chip"
+            [class.selected]="quantity() === q"
+            (click)="setQuickQuantity(q)">
+            {{ q }} L
+          </button>
+        }
+      </div>
+
+      <input
+        type="number"
+        [ngModel]="quantity()"
+        (ngModelChange)="quantity.set($event)"
+        placeholder="Enter quantity (e.g. 2.5)"
+        step="0.25"
+        min="0.1"
+        inputmode="decimal"
+        class="input-field quantity-input" />
+    </div>
+
+    <!-- Rate -->
+    <div class="field-group">
+      <label>Rate / Litre ({{ settings()?.currencySymbol || '₹' }})</label>
+      <div class="rate-input-container">
+        <span class="curr-prefix">{{ settings()?.currencySymbol || '₹' }}</span>
+        <input
+          type="number"
+          [ngModel]="rate()"
+          (ngModelChange)="rate.set($event)"
+          step="1"
+          min="1"
+          inputmode="decimal"
+          class="input-field rate-input" />
+        <span class="unit-suffix">/ L</span>
+      </div>
+    </div>
+
+    <!-- Amount preview -->
+    @if (amount() > 0) {
+      <div class="amount-card">
+        <span class="calc-formula">{{ quantity() }} L × {{ settings()?.currencySymbol || '₹' }}{{ rate() }}</span>
+        <span class="calc-equals">=</span>
+        <span class="calc-amount">{{ settings()?.currencySymbol || '₹' }}{{ amount() }}</span>
+      </div>
+    }
+
+    <!-- Notes -->
+    <div class="field-group">
+      <label>Notes (Optional)</label>
+      <input
+        type="text"
+        [ngModel]="notes()"
+        (ngModelChange)="notes.set($event)"
+        placeholder="Add note (e.g. extra milk, cow, buffalo)..."
+        class="input-field" />
+    </div>
+
+    <!-- Save Button -->
+    <button
+      class="btn-save"
+      [disabled]="!session() || !quantity() || quantity()! <= 0"
+      (click)="save()">
+      {{ isEditing() ? '✓ Update Record' : '✓ Save Record' }}
+    </button>
+  </div>
+
+  <!-- Success Toast -->
+  @if (showSuccess()) {
+    <div class="toast-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  <!-- Duplicate Record Dialog (Section 4 requirement) -->
+  @if (showDuplicateDialog()) {
+    <div class="overlay" (click)="cancelDuplicate()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-icon">⚠️</div>
+        <h3>Duplicate Entry</h3>
+        <p class="dialog-text">
+          <strong>{{ session() }} record already exists. Edit existing record?</strong>
+        </p>
+        <div class="existing-summary">
+          Existing: {{ duplicateRecord()?.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ duplicateRecord()?.ratePerLitre }}
+          = <strong>{{ settings()?.currencySymbol || '₹' }}{{ duplicateRecord()?.amount }}</strong>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn-dialog btn-edit" (click)="editDuplicate()">Edit</button>
+          <button class="btn-dialog btn-cancel" (click)="cancelDuplicate()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,97 @@
+<div class="dashboard">
+  <!-- Top App Brand / Header -->
+  <div class="top-bar">
+    <div class="brand">
+      <span class="brand-icon">🥛</span>
+      <span class="brand-title">MilkTrack</span>
+    </div>
+    <span class="offline-badge">⚡ Offline Ready</span>
+  </div>
+
+  <div class="date-header">
+    <span class="label">Today</span>
+    <h2>{{ todayFormatted() }}</h2>
+  </div>
+
+  <!-- Primary Large + Add Milk Button -->
+  <div class="primary-action-container">
+    <button class="btn-main-add" (click)="addMilk()">
+      <span class="plus-icon">＋</span>
+      <span class="btn-text">Add Milk</span>
+    </button>
+  </div>
+
+  <!-- Morning Card -->
+  <div class="session-card" [class.recorded]="morningRecord()" [class.missing]="!morningRecord()">
+    <div class="session-header">
+      <div class="session-title-group">
+        <span class="session-icon">🌅</span>
+        <span class="session-name">Morning</span>
+      </div>
+      @if (morningRecord()) {
+        <span class="badge-done">Recorded</span>
+      }
+    </div>
+    @if (morningRecord(); as m) {
+      <div class="session-details">
+        <span class="check">✓</span>
+        <span class="qty">{{ m.quantity }} L</span>
+        <span class="rate">× {{ settings()?.currencySymbol }}{{ m.ratePerLitre }}/L</span>
+        <span class="amount">{{ settings()?.currencySymbol }}{{ m.amount }}</span>
+      </div>
+    } @else {
+      <div class="session-missing">
+        <div class="missing-text">
+          <span class="warn">⚠</span>
+          <span>Not Added</span>
+        </div>
+        <button class="btn-add-session" (click)="addMilk('Morning')">+ Add Morning</button>
+      </div>
+    }
+  </div>
+
+  <!-- Evening Card -->
+  <div class="session-card" [class.recorded]="eveningRecord()" [class.missing]="!eveningRecord()">
+    <div class="session-header">
+      <div class="session-title-group">
+        <span class="session-icon">🌆</span>
+        <span class="session-name">Evening</span>
+      </div>
+      @if (eveningRecord()) {
+        <span class="badge-done">Recorded</span>
+      }
+    </div>
+    @if (eveningRecord(); as e) {
+      <div class="session-details">
+        <span class="check">✓</span>
+        <span class="qty">{{ e.quantity }} L</span>
+        <span class="rate">× {{ settings()?.currencySymbol }}{{ e.ratePerLitre }}/L</span>
+        <span class="amount">{{ settings()?.currencySymbol }}{{ e.amount }}</span>
+      </div>
+    } @else {
+      <div class="session-missing">
+        <div class="missing-text">
+          <span class="warn">⚠</span>
+          <span>Not Added</span>
+        </div>
+        <button class="btn-add-session" (click)="addMilk('Evening')">+ Add Evening</button>
+      </div>
+    }
+  </div>
+
+  <!-- Today's Total -->
+  @if (morningRecord() || eveningRecord()) {
+    <div class="total-card">
+      <div class="total-heading">TODAY'S SUMMARY</div>
+      <div class="divider"></div>
+      <div class="total-row">
+        <span class="total-label">Total Milk</span>
+        <span class="total-value">{{ totalQuantity() }} L</span>
+      </div>
+      <div class="total-row highlight">
+        <span class="total-label">Total Cost</span>
+        <span class="total-value">{{ settings()?.currencySymbol }}{{ totalAmount() }}</span>
+      </div>
+    </div>
+  }
+</div>

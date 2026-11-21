@@ -1,0 +1,74 @@
+<div class="reports-page">
+  <div class="page-header">
+    <h2>📊 Monthly Summary</h2>
+  </div>
+
+  <!-- Month / Year Selector -->
+  <div class="month-selector">
+    <button class="nav-btn" (click)="prevMonth()" aria-label="Previous Month">◀</button>
+    <span class="month-title">{{ monthLabel() }}</span>
+    <button class="nav-btn" (click)="nextMonth()" aria-label="Next Month">▶</button>
+  </div>
+
+  @if (summary(); as s) {
+    <!-- Main Total Card -->
+    <div class="summary-card hero-card">
+      <div class="metric-block">
+        <span class="metric-label">Total Milk</span>
+        <span class="metric-val big">{{ s.totalQuantity }} L</span>
+      </div>
+      <div class="metric-divider"></div>
+      <div class="metric-block">
+        <span class="metric-label">Total Cost</span>
+        <span class="metric-val big green">{{ settings()?.currencySymbol || '₹' }}{{ s.totalAmount.toLocaleString('en-IN') }}</span>
+      </div>
+    </div>
+
+    <!-- Session Breakdown Card -->
+    <div class="summary-card">
+      <div class="card-subtitle">Session Breakdown</div>
+
+      <div class="metric-row">
+        <div class="row-left">
+          <span class="session-icon">🌅</span>
+          <span class="row-label">Morning</span>
+        </div>
+        <span class="row-value">{{ s.morningQuantity }} L</span>
+      </div>
+
+      <div class="metric-row">
+        <div class="row-left">
+          <span class="session-icon">🌆</span>
+          <span class="row-label">Evening</span>
+        </div>
+        <span class="row-value">{{ s.eveningQuantity }} L</span>
+      </div>
+    </div>
+
+    <!-- Daily Averages Card -->
+    <div class="summary-card">
+      <div class="card-subtitle">Daily Averages ({{ s.totalDays }} Days)</div>
+
+      <div class="metric-row">
+        <span class="row-label">Average Per Day</span>
+        <span class="row-value">{{ s.averagePerDay }} L</span>
+      </div>
+
+      <div class="metric-row highlight-cost">
+        <span class="row-label">Average Daily Cost</span>
+        <span class="row-value green">{{ settings()?.currencySymbol || '₹' }}{{ s.averageDailyCost }}</span>
+      </div>
+
+      <div class="metric-row subtle">
+        <span class="row-label">Days Recorded</span>
+        <span class="row-value">{{ s.recordedDays }} / {{ s.totalDays }} days</span>
+      </div>
+    </div>
+
+    @if (s.totalQuantity === 0) {
+      <div class="empty-state">
+        <p>No milk records found for {{ monthLabel() }}</p>
+      </div>
+    }
+  }
+</div>
