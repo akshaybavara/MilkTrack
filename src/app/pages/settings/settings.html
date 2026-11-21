@@ -100,6 +100,43 @@
     </button>
   </div>
 
+  <!-- App Info & Developer Section -->
+  <div class="card about-card">
+    <div class="about-header">
+      <img src="icons/icon-96x96.png" class="about-logo" alt="MilkTrack" width="48" height="48" />
+      <div class="about-titles">
+        <h3 class="about-app-name">MilkTrack</h3>
+        <span class="about-version">Version 1.0</span>
+      </div>
+    </div>
+    
+    <div class="about-divider"></div>
+
+    <div class="about-item">
+      <span class="about-label">👨‍💻 Developer</span>
+      <span class="about-value dev-name">Akshay Kumar</span>
+    </div>
+
+    <div class="about-item">
+      <span class="about-label">📱 Application</span>
+      <span class="about-value">Personal Milk Record Manager</span>
+    </div>
+
+    <div class="about-item">
+      <span class="about-label">💾 Data Storage</span>
+      <span class="about-value">IndexedDB (100% Offline)</span>
+    </div>
+
+    <div class="about-item">
+      <span class="about-label">⚡ Platform</span>
+      <span class="about-value">Progressive Web App (PWA)</span>
+    </div>
+
+    <div class="about-footer">
+      <span>Developed by Akshay Kumar • Version 1.0</span>
+    </div>
+  </div>
+
   <!-- Import Confirmation Dialog -->
   @if (showImportConfirm()) {
     <div class="overlay" (click)="cancelImport()">

@@ -46,6 +46,85 @@
     border: 1px solid #ffebee;
     background: #fffafa;
   }
+
+  &.about-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+
+    .about-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+
+      .about-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+      }
+
+      .about-titles {
+        .about-app-name {
+          margin: 0;
+          font-size: 19px;
+          font-weight: 800;
+          color: #1e3a8a;
+          line-height: 1.2;
+        }
+
+        .about-version {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: 700;
+          color: #2563eb;
+          background: #eff6ff;
+          padding: 2px 8px;
+          border-radius: 6px;
+          margin-top: 4px;
+        }
+      }
+    }
+
+    .about-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 12px 0;
+    }
+
+    .about-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #f8fafc;
+      font-size: 14px;
+
+      .about-label {
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      .about-value {
+        color: #0f172a;
+        font-weight: 600;
+
+        &.dev-name {
+          color: #1e40af;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .about-footer {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+  }
 }
 
 .card-title {
