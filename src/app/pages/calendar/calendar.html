@@ -7,7 +7,14 @@
   <div class="month-nav">
     <button class="nav-btn" (click)="prevMonth()" aria-label="Previous Month">◀</button>
     <span class="month-label">{{ monthLabel() }}</span>
-    <button class="nav-btn" (click)="nextMonth()" aria-label="Next Month">▶</button>
+    <button
+      class="nav-btn"
+      [disabled]="isNextMonthDisabled()"
+      [class.disabled]="isNextMonthDisabled()"
+      (click)="nextMonth()"
+      aria-label="Next Month">
+      ▶
+    </button>
   </div>
 
   <!-- Calendar Grid -->
@@ -23,6 +30,7 @@
           [class.today]="day.isToday"
           [class.has-both]="day.status === 'both'"
           [class.has-partial]="day.status === 'partial'"
+          [class.has-absent]="day.status === 'absent'"
           (click)="selectDay(day)">
           @if (day.date > 0) {
             <span class="day-num">{{ day.date }}</span>
@@ -30,6 +38,7 @@
               @switch (day.status) {
                 @case ('both') { 🟢 }
                 @case ('partial') { 🟡 }
+                @case ('absent') { 🔴 }
                 @default { ⚪ }
               }
             </span>
@@ -48,6 +57,10 @@
     <div class="legend-item">
       <span class="dot">🟡</span>
       <span class="desc">One session</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot">🔴</span>
+      <span class="desc">Absent</span>
     </div>
     <div class="legend-item">
       <span class="dot">⚪</span>
@@ -79,46 +92,75 @@
                 🌆 Add Evening
               </button>
             </div>
+            <button class="btn-sheet-absent-full" (click)="markDayAbsent()">
+              🚫 Mark Entire Day Absent
+            </button>
           </div>
         } @else {
           <div class="records-list">
             @for (rec of selectedRecords(); track rec.id) {
-              <div class="detail-record-card">
+              <div class="detail-record-card" [class.absent-card-detail]="rec.isAbsent || rec.quantity === 0">
                 <div class="record-top">
                   <div class="session-badge" [class.morning]="rec.session === 'Morning'" [class.evening]="rec.session === 'Evening'">
                     {{ rec.session === 'Morning' ? '🌅 Morning' : '🌆 Evening' }}
                   </div>
-                  <button class="btn-edit-icon" (click)="editRecord(rec)">✏️ Edit</button>
+                  @if (rec.isAbsent || rec.quantity === 0) {
+                    <span class="badge-absent-sheet">🚫 Absent</span>
+                  }
+                  <div class="card-action-btns">
+                    <button class="btn-edit-icon" (click)="editRecord(rec)">✏️ Edit</button>
+                    <button class="btn-delete-icon" (click)="deleteRecord(rec)" aria-label="Delete">🗑️</button>
+                  </div>
                 </div>
-                <div class="record-calc">
-                  <span class="formula">{{ rec.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ rec.ratePerLitre }}</span>
-                  <span class="total-amt">{{ settings()?.currencySymbol || '₹' }}{{ rec.amount }}</span>
-                </div>
+                @if (rec.isAbsent || rec.quantity === 0) {
+                  <div class="record-calc absent">
+                    <span class="formula">No milk delivered (Absent)</span>
+                    <span class="total-amt muted">{{ settings()?.currencySymbol || '₹' }}0</span>
+                  </div>
+                } @else {
+                  <div class="record-calc">
+                    <span class="formula">{{ rec.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ rec.ratePerLitre }}</span>
+                    <span class="total-amt">{{ settings()?.currencySymbol || '₹' }}{{ rec.amount }}</span>
+                  </div>
+                }
               </div>
             }
           </div>
 
-          <!-- Quick Add for Missing Sessions -->
+          <!-- Quick Add / Mark Absent for Missing Sessions -->
           @if (!hasMorning() || !hasEvening()) {
-            <div class="missing-actions">
+            <div class="missing-actions-container">
               @if (!hasMorning()) {
-                <button class="btn-missing-add" (click)="addForDate('Morning')">
-                  + Add Morning
-                </button>
+                <div class="missing-row-action">
+                  <button class="btn-missing-add" (click)="addForDate('Morning')">
+                    + Add Morning
+                  </button>
+                  <button class="btn-missing-absent" (click)="markSessionAbsent('Morning')">
+                    🚫 Morning Absent
+                  </button>
+                </div>
               }
               @if (!hasEvening()) {
-                <button class="btn-missing-add" (click)="addForDate('Evening')">
-                  + Add Evening
-                </button>
+                <div class="missing-row-action">
+                  <button class="btn-missing-add" (click)="addForDate('Evening')">
+                    + Add Evening
+                  </button>
+                  <button class="btn-missing-absent" (click)="markSessionAbsent('Evening')">
+                    🚫 Evening Absent
+                  </button>
+                </div>
               }
             </div>
           }
 
           <!-- Day Summary Total -->
-          <div class="sheet-day-total">
+          <div class="sheet-day-total" [class.sheet-total-absent]="isDayAllAbsent()">
             <span>Total Milk: <strong>{{ dayTotalQuantity() }} L</strong></span>
             <span class="total-cost">{{ settings()?.currencySymbol || '₹' }}{{ dayTotalAmount() }}</span>
           </div>
+          @if (isDayAllAbsent()) {
+            <div class="sheet-absent-notice">🚫 Entire day recorded as absent</div>
+          }
         }
       </div>
     </div>

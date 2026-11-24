@@ -2,7 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DbService } from '../../services/db.service';
-import { MilkRecord, AppSettings } from '../../models/milk-record.model';
+import { MilkRecord, AppSettings, Session } from '../../models/milk-record.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,6 +30,15 @@ export class DashboardComponent implements OnInit {
     return this.round((m?.amount || 0) + (e?.amount || 0));
   });
 
+  isDayAllAbsent = computed(() => {
+    const m = this.morningRecord();
+    const e = this.eveningRecord();
+    if (!m && !e) return false;
+    const mAbsent = !m || m.isAbsent || m.quantity === 0;
+    const eAbsent = !e || e.isAbsent || e.quantity === 0;
+    return mAbsent && eAbsent && (!!m || !!e);
+  });
+
   constructor(private db: DbService, private router: Router) {}
 
   async ngOnInit() {
@@ -51,12 +60,21 @@ export class DashboardComponent implements OnInit {
     this.eveningRecord.set(evening);
   }
 
-  addMilk(session?: string) {
+  addMilk(session?: Session) {
     if (session) {
       this.router.navigate(['/add'], { queryParams: { session } });
     } else {
       this.router.navigate(['/add']);
     }
+  }
+
+  async markAbsent(session: Session) {
+    await this.db.markAbsent(this.today(), session, 'Absent');
+    await this.loadData();
+  }
+
+  editRecord(record: MilkRecord) {
+    this.router.navigate(['/add'], { queryParams: { editId: record.id } });
   }
 
   private formatDateKey(d: Date): string {

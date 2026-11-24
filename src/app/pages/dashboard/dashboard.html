@@ -22,66 +22,116 @@
   </div>
 
   <!-- Morning Card -->
-  <div class="session-card" [class.recorded]="morningRecord()" [class.missing]="!morningRecord()">
+  <div
+    class="session-card"
+    [class.recorded]="morningRecord() && !morningRecord()?.isAbsent && morningRecord()?.quantity! > 0"
+    [class.absent]="morningRecord()?.isAbsent || (morningRecord() && morningRecord()?.quantity === 0)"
+    [class.missing]="!morningRecord()">
     <div class="session-header">
       <div class="session-title-group">
         <span class="session-icon">🌅</span>
         <span class="session-name">Morning</span>
       </div>
-      @if (morningRecord()) {
-        <span class="badge-done">Recorded</span>
+      @if (morningRecord(); as m) {
+        @if (m.isAbsent || m.quantity === 0) {
+          <span class="badge-absent">🚫 Absent</span>
+        } @else {
+          <span class="badge-done">Recorded</span>
+        }
       }
     </div>
     @if (morningRecord(); as m) {
-      <div class="session-details">
-        <span class="check">✓</span>
-        <span class="qty">{{ m.quantity }} L</span>
-        <span class="rate">× {{ settings()?.currencySymbol }}{{ m.ratePerLitre }}/L</span>
-        <span class="amount">{{ settings()?.currencySymbol }}{{ m.amount }}</span>
-      </div>
+      @if (m.isAbsent || m.quantity === 0) {
+        <div class="session-details absent-details">
+          <div class="absent-info-text">
+            <span class="absent-tag">No milk delivered</span>
+            <span class="qty muted">0 L</span>
+          </div>
+          <div class="session-right">
+            <span class="amount muted">{{ settings()?.currencySymbol }}0</span>
+            <button class="btn-session-edit" (click)="editRecord(m)" aria-label="Edit Record">✏️</button>
+          </div>
+        </div>
+      } @else {
+        <div class="session-details">
+          <span class="check">✓</span>
+          <span class="qty">{{ m.quantity }} L</span>
+          <span class="rate">× {{ settings()?.currencySymbol }}{{ m.ratePerLitre }}/L</span>
+          <span class="amount">{{ settings()?.currencySymbol }}{{ m.amount }}</span>
+          <button class="btn-session-edit" (click)="editRecord(m)" aria-label="Edit Record">✏️</button>
+        </div>
+      }
     } @else {
       <div class="session-missing">
         <div class="missing-text">
           <span class="warn">⚠</span>
           <span>Not Added</span>
         </div>
-        <button class="btn-add-session" (click)="addMilk('Morning')">+ Add Morning</button>
+        <div class="session-missing-btns">
+          <button class="btn-add-session" (click)="addMilk('Morning')">+ Add</button>
+          <button class="btn-absent-session" (click)="markAbsent('Morning')" title="Mark session as absent">🚫 Absent</button>
+        </div>
       </div>
     }
   </div>
 
   <!-- Evening Card -->
-  <div class="session-card" [class.recorded]="eveningRecord()" [class.missing]="!eveningRecord()">
+  <div
+    class="session-card"
+    [class.recorded]="eveningRecord() && !eveningRecord()?.isAbsent && eveningRecord()?.quantity! > 0"
+    [class.absent]="eveningRecord()?.isAbsent || (eveningRecord() && eveningRecord()?.quantity === 0)"
+    [class.missing]="!eveningRecord()">
     <div class="session-header">
       <div class="session-title-group">
         <span class="session-icon">🌆</span>
         <span class="session-name">Evening</span>
       </div>
-      @if (eveningRecord()) {
-        <span class="badge-done">Recorded</span>
+      @if (eveningRecord(); as e) {
+        @if (e.isAbsent || e.quantity === 0) {
+          <span class="badge-absent">🚫 Absent</span>
+        } @else {
+          <span class="badge-done">Recorded</span>
+        }
       }
     </div>
     @if (eveningRecord(); as e) {
-      <div class="session-details">
-        <span class="check">✓</span>
-        <span class="qty">{{ e.quantity }} L</span>
-        <span class="rate">× {{ settings()?.currencySymbol }}{{ e.ratePerLitre }}/L</span>
-        <span class="amount">{{ settings()?.currencySymbol }}{{ e.amount }}</span>
-      </div>
+      @if (e.isAbsent || e.quantity === 0) {
+        <div class="session-details absent-details">
+          <div class="absent-info-text">
+            <span class="absent-tag">No milk delivered</span>
+            <span class="qty muted">0 L</span>
+          </div>
+          <div class="session-right">
+            <span class="amount muted">{{ settings()?.currencySymbol }}0</span>
+            <button class="btn-session-edit" (click)="editRecord(e)" aria-label="Edit Record">✏️</button>
+          </div>
+        </div>
+      } @else {
+        <div class="session-details">
+          <span class="check">✓</span>
+          <span class="qty">{{ e.quantity }} L</span>
+          <span class="rate">× {{ settings()?.currencySymbol }}{{ e.ratePerLitre }}/L</span>
+          <span class="amount">{{ settings()?.currencySymbol }}{{ e.amount }}</span>
+          <button class="btn-session-edit" (click)="editRecord(e)" aria-label="Edit Record">✏️</button>
+        </div>
+      }
     } @else {
       <div class="session-missing">
         <div class="missing-text">
           <span class="warn">⚠</span>
           <span>Not Added</span>
         </div>
-        <button class="btn-add-session" (click)="addMilk('Evening')">+ Add Evening</button>
+        <div class="session-missing-btns">
+          <button class="btn-add-session" (click)="addMilk('Evening')">+ Add</button>
+          <button class="btn-absent-session" (click)="markAbsent('Evening')" title="Mark session as absent">🚫 Absent</button>
+        </div>
       </div>
     }
   </div>
 
   <!-- Today's Total -->
   @if (morningRecord() || eveningRecord()) {
-    <div class="total-card">
+    <div class="total-card" [class.day-absent-card]="isDayAllAbsent()">
       <div class="total-heading">TODAY'S SUMMARY</div>
       <div class="divider"></div>
       <div class="total-row">
@@ -92,6 +142,9 @@
         <span class="total-label">Total Cost</span>
         <span class="total-value">{{ settings()?.currencySymbol }}{{ totalAmount() }}</span>
       </div>
+      @if (isDayAllAbsent()) {
+        <div class="absent-summary-note">🚫 Marked Absent for the entire day</div>
+      }
     </div>
   }
 </div>

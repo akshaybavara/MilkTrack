@@ -14,15 +14,19 @@ import { MilkRecord, Session, AppSettings } from '../../models/milk-record.model
 })
 export class AddRecordComponent implements OnInit {
   date = signal<string>('');
+  todayStr = signal<string>('');
   session = signal<Session | ''>('');
   quantity = signal<number | null>(null);
   rate = signal<number>(60);
   notes = signal<string>('');
   settings = signal<AppSettings | null>(null);
+  isAbsent = signal<boolean>(false);
 
-  quickQuantities = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4];
+  // Quick quantities including 0.25 L
+  quickQuantities = [0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4];
 
   amount = computed(() => {
+    if (this.isAbsent()) return 0;
     const q = this.quantity();
     const r = this.rate();
     if (q !== null && q > 0 && r > 0) {
@@ -54,9 +58,11 @@ export class AddRecordComponent implements OnInit {
     this.settings.set(settings);
     this.rate.set(settings.defaultRate || 60);
 
-    // Set default date to today
+    // Set default date to today and max date to today
     const now = new Date();
-    this.date.set(this.formatDateKey(now));
+    const todayFormatted = this.formatDateKey(now);
+    this.todayStr.set(todayFormatted);
+    this.date.set(todayFormatted);
 
     // Handle query params
     this.route.queryParams.subscribe(async params => {
@@ -65,6 +71,11 @@ export class AddRecordComponent implements OnInit {
       }
       if (params['date']) {
         this.date.set(params['date']);
+      }
+      if (params['absent'] === 'true') {
+        this.isAbsent.set(true);
+        this.quantity.set(0);
+        this.notes.set('Absent');
       }
       if (params['editId']) {
         await this.loadRecordForEdit(Number(params['editId']));
@@ -79,9 +90,12 @@ export class AddRecordComponent implements OnInit {
       this.editingRecord.set(record);
       this.date.set(record.date);
       this.session.set(record.session);
-      this.quantity.set(record.quantity);
       this.rate.set(record.ratePerLitre);
       this.notes.set(record.notes || '');
+
+      const isAbs = !!(record.isAbsent || record.quantity === 0);
+      this.isAbsent.set(isAbs);
+      this.quantity.set(isAbs ? 0 : record.quantity);
     }
   }
 
@@ -90,11 +104,39 @@ export class AddRecordComponent implements OnInit {
   }
 
   setQuickQuantity(q: number) {
+    this.isAbsent.set(false);
     this.quantity.set(q);
   }
 
+  addExtraQuantity(extra = 0.25) {
+    this.isAbsent.set(false);
+    const curr = this.quantity() || 0;
+    const updated = Math.round((curr + extra) * 100) / 100;
+    this.quantity.set(updated);
+  }
+
+  toggleAbsent() {
+    const next = !this.isAbsent();
+    this.isAbsent.set(next);
+    if (next) {
+      this.quantity.set(0);
+      if (!this.notes()) {
+        this.notes.set('Absent');
+      }
+    } else {
+      this.quantity.set(null);
+      if (this.notes() === 'Absent') {
+        this.notes.set('');
+      }
+    }
+  }
+
   async save() {
-    if (!this.session() || this.quantity() === null || this.quantity()! <= 0) {
+    if (!this.session()) {
+      return;
+    }
+
+    if (!this.isAbsent() && (this.quantity() === null || this.quantity()! <= 0)) {
       return;
     }
 
@@ -117,9 +159,11 @@ export class AddRecordComponent implements OnInit {
   async saveRecord() {
     const session = this.session() as Session;
     const now = new Date().toISOString();
-    const q = this.quantity()!;
+    const isAbs = this.isAbsent();
+    const q = isAbs ? 0 : (this.quantity() || 0);
     const r = this.rate();
-    const calculatedAmount = Math.round(q * r * 100) / 100;
+    const calculatedAmount = isAbs ? 0 : Math.round(q * r * 100) / 100;
+    const noteText = this.notes() || (isAbs ? 'Absent' : '');
 
     if (this.isEditing()) {
       const record = this.editingRecord()!;
@@ -130,11 +174,12 @@ export class AddRecordComponent implements OnInit {
         quantity: q,
         ratePerLitre: r,
         amount: calculatedAmount,
-        notes: this.notes() || '',
+        notes: noteText,
+        isAbsent: isAbs,
         updatedAt: now
       };
       await this.db.updateRecord(updated);
-      this.showSuccessToast('Record updated successfully!');
+      this.showSuccessToast(isAbs ? 'Marked as Absent!' : 'Record updated successfully!');
     } else {
       const record: Omit<MilkRecord, 'id'> = {
         date: this.date(),
@@ -142,12 +187,13 @@ export class AddRecordComponent implements OnInit {
         quantity: q,
         ratePerLitre: r,
         amount: calculatedAmount,
-        notes: this.notes() || '',
+        notes: noteText,
+        isAbsent: isAbs,
         createdAt: now,
         updatedAt: now
       };
       await this.db.addRecord(record);
-      this.showSuccessToast('Record saved successfully!');
+      this.showSuccessToast(isAbs ? 'Marked as Absent!' : 'Record saved successfully!');
     }
 
     // Automatically remember the rate used for subsequent entries
@@ -168,6 +214,7 @@ export class AddRecordComponent implements OnInit {
       this.editingRecord.set(dup);
       this.date.set(dup.date);
       this.session.set(dup.session);
+      this.isAbsent.set(!!dup.isAbsent || dup.quantity === 0);
       this.quantity.set(dup.quantity);
       this.rate.set(dup.ratePerLitre);
       this.notes.set(dup.notes || '');

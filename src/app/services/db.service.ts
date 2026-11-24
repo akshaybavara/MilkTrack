@@ -230,6 +230,44 @@ export class DbService {
     return [headers, ...rows].join('\n');
   }
 
+  // ─── Absent Tracking ────────────────────────
+
+  async markAbsent(date: string, session: Session, notes = 'Absent'): Promise<number> {
+    const existing = await this.getRecordByDateSession(date, session);
+    const settings = await this.getSettings();
+    const rate = settings.defaultRate || 60;
+    const now = new Date().toISOString();
+
+    if (existing) {
+      existing.quantity = 0;
+      existing.amount = 0;
+      existing.ratePerLitre = rate;
+      existing.isAbsent = true;
+      existing.notes = notes;
+      existing.updatedAt = now;
+      await this.updateRecord(existing);
+      return existing.id!;
+    } else {
+      const record: Omit<MilkRecord, 'id'> = {
+        date,
+        session,
+        quantity: 0,
+        ratePerLitre: rate,
+        amount: 0,
+        notes,
+        isAbsent: true,
+        createdAt: now,
+        updatedAt: now
+      };
+      return await this.addRecord(record);
+    }
+  }
+
+  async markDayAbsent(date: string, notes = 'Absent'): Promise<void> {
+    await this.markAbsent(date, 'Morning', notes);
+    await this.markAbsent(date, 'Evening', notes);
+  }
+
   // ─── Calendar Helpers ────────────────────────
 
   async getRecordedDatesForMonth(year: number, month: number): Promise<Map<string, Session[]>> {
@@ -239,6 +277,17 @@ export class DbService {
       const sessions = map.get(r.date) || [];
       sessions.push(r.session);
       map.set(r.date, sessions);
+    }
+    return map;
+  }
+
+  async getRecordsMapByMonth(year: number, month: number): Promise<Map<string, MilkRecord[]>> {
+    const records = await this.getRecordsByMonth(year, month);
+    const map = new Map<string, MilkRecord[]>();
+    for (const r of records) {
+      const list = map.get(r.date) || [];
+      list.push(r);
+      map.set(r.date, list);
     }
     return map;
   }

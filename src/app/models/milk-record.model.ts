@@ -4,10 +4,11 @@ export interface MilkRecord {
   id?: number;
   date: string;        // YYYY-MM-DD format
   session: Session;
-  quantity: number;     // in litres
+  quantity: number;     // in litres (0 if absent)
   ratePerLitre: number; // rate per litre
-  amount: number;       // quantity × ratePerLitre
+  amount: number;       // quantity × ratePerLitre (0 if absent)
   notes: string;
+  isAbsent?: boolean;   // true if marked absent (no milk)
   createdAt: string;    // ISO date string
   updatedAt: string;    // ISO date string
 }
@@ -26,6 +27,7 @@ export interface DaySummary {
   evening?: MilkRecord;
   totalQuantity: number;
   totalAmount: number;
+  isAbsent?: boolean;
 }
 
 export interface MonthlySummary {
@@ -37,6 +39,8 @@ export interface MonthlySummary {
   eveningQuantity: number;
   totalDays: number;
   recordedDays: number;
+  absentDays: number;
+  deliveredDays: number;
   averagePerDay: number;
   averageDailyCost: number;
 }

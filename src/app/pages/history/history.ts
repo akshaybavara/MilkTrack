@@ -44,12 +44,17 @@ export class HistoryComponent implements OnInit {
       const recs = dateMap.get(date)!;
       const morning = recs.find(r => r.session === 'Morning');
       const evening = recs.find(r => r.session === 'Evening');
+      const totalQuantity = Math.round(((morning?.quantity || 0) + (evening?.quantity || 0)) * 100) / 100;
+      const totalAmount = Math.round(((morning?.amount || 0) + (evening?.amount || 0)) * 100) / 100;
+      const isAbsent = totalQuantity === 0 && (!!morning || !!evening);
+
       summaries.push({
         date,
         morning,
         evening,
-        totalQuantity: Math.round(((morning?.quantity || 0) + (evening?.quantity || 0)) * 100) / 100,
-        totalAmount: Math.round(((morning?.amount || 0) + (evening?.amount || 0)) * 100) / 100
+        totalQuantity,
+        totalAmount,
+        isAbsent
       });
     }
     this.days.set(summaries);

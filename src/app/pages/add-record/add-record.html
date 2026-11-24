@@ -11,6 +11,7 @@
       <label>Date</label>
       <input
         type="date"
+        [max]="todayStr()"
         [ngModel]="date()"
         (ngModelChange)="date.set($event)"
         class="input-field date-input" />
@@ -39,63 +40,99 @@
       </div>
     </div>
 
-    <!-- Quantity -->
-    <div class="field-group">
-      <div class="label-row">
-        <label>Quantity (Litres)</label>
-        @if (quantity()) {
-          <span class="active-val">{{ quantity() }} L</span>
-        }
+    <!-- Mark Absent Toggle Card -->
+    <div class="absent-card" [class.is-absent]="isAbsent()">
+      <div class="absent-left">
+        <span class="absent-emoji">{{ isAbsent() ? '🚫' : '🥛' }}</span>
+        <div class="absent-text">
+          <span class="absent-head">{{ isAbsent() ? 'Marked as Absent' : 'Mark as Absent' }}</span>
+          <span class="absent-sub">{{ isAbsent() ? 'No milk delivered (0 L • ₹0)' : 'Did not take milk today?' }}</span>
+        </div>
       </div>
-
-      <!-- Quick Chips -->
-      <div class="quick-chips">
-        @for (q of quickQuantities; track q) {
-          <button
-            type="button"
-            class="chip"
-            [class.selected]="quantity() === q"
-            (click)="setQuickQuantity(q)">
-            {{ q }} L
-          </button>
-        }
-      </div>
-
-      <input
-        type="number"
-        [ngModel]="quantity()"
-        (ngModelChange)="quantity.set($event)"
-        placeholder="Enter quantity (e.g. 2.5)"
-        step="0.25"
-        min="0.1"
-        inputmode="decimal"
-        class="input-field quantity-input" />
+      <button
+        type="button"
+        class="btn-absent-toggle"
+        [class.btn-absent-active]="isAbsent()"
+        (click)="toggleAbsent()">
+        {{ isAbsent() ? '✓ Absent' : 'Mark Absent' }}
+      </button>
     </div>
 
-    <!-- Rate -->
-    <div class="field-group">
-      <label>Rate / Litre ({{ settings()?.currencySymbol || '₹' }})</label>
-      <div class="rate-input-container">
-        <span class="curr-prefix">{{ settings()?.currencySymbol || '₹' }}</span>
+    @if (isAbsent()) {
+      <div class="absent-active-notice">
+        <span class="notice-icon">ℹ️</span>
+        <span>This session will be saved as <strong>Absent (0 Litre, {{ settings()?.currencySymbol || '₹' }}0)</strong>.</span>
+      </div>
+    } @else {
+      <!-- Quantity -->
+      <div class="field-group">
+        <div class="label-row">
+          <label>Quantity (Litres)</label>
+          @if (quantity()) {
+            <span class="active-val">{{ quantity() }} L</span>
+          }
+        </div>
+
+        <!-- Quick Chips (including 0.25 L) -->
+        <div class="quick-chips">
+          @for (q of quickQuantities; track q) {
+            <button
+              type="button"
+              class="chip"
+              [class.selected]="quantity() === q"
+              (click)="setQuickQuantity(q)">
+              {{ q }} L
+            </button>
+          }
+        </div>
+
+        <!-- Extra Quantity Buttons -->
+        <div class="extra-qty-bar">
+          <span class="extra-label">Add Extra:</span>
+          <button type="button" class="btn-extra" (click)="addExtraQuantity(0.25)">
+            <span class="plus-icon">＋</span>0.25L Extra
+          </button>
+          <button type="button" class="btn-extra" (click)="addExtraQuantity(0.5)">
+            <span class="plus-icon">＋</span>0.5L Extra
+          </button>
+        </div>
+
         <input
           type="number"
-          [ngModel]="rate()"
-          (ngModelChange)="rate.set($event)"
-          step="1"
-          min="1"
+          [ngModel]="quantity()"
+          (ngModelChange)="quantity.set($event)"
+          placeholder="Enter quantity (e.g. 2.5)"
+          step="0.25"
+          min="0.1"
           inputmode="decimal"
-          class="input-field rate-input" />
-        <span class="unit-suffix">/ L</span>
+          class="input-field quantity-input" />
       </div>
-    </div>
 
-    <!-- Amount preview -->
-    @if (amount() > 0) {
-      <div class="amount-card">
-        <span class="calc-formula">{{ quantity() }} L × {{ settings()?.currencySymbol || '₹' }}{{ rate() }}</span>
-        <span class="calc-equals">=</span>
-        <span class="calc-amount">{{ settings()?.currencySymbol || '₹' }}{{ amount() }}</span>
+      <!-- Rate -->
+      <div class="field-group">
+        <label>Rate / Litre ({{ settings()?.currencySymbol || '₹' }})</label>
+        <div class="rate-input-container">
+          <span class="curr-prefix">{{ settings()?.currencySymbol || '₹' }}</span>
+          <input
+            type="number"
+            [ngModel]="rate()"
+            (ngModelChange)="rate.set($event)"
+            step="1"
+            min="1"
+            inputmode="decimal"
+            class="input-field rate-input" />
+          <span class="unit-suffix">/ L</span>
+        </div>
       </div>
+
+      <!-- Amount preview -->
+      @if (amount() > 0) {
+        <div class="amount-card">
+          <span class="calc-formula">{{ quantity() }} L × {{ settings()?.currencySymbol || '₹' }}{{ rate() }}</span>
+          <span class="calc-equals">=</span>
+          <span class="calc-amount">{{ settings()?.currencySymbol || '₹' }}{{ amount() }}</span>
+        </div>
+      }
     }
 
     <!-- Notes -->
@@ -105,16 +142,17 @@
         type="text"
         [ngModel]="notes()"
         (ngModelChange)="notes.set($event)"
-        placeholder="Add note (e.g. extra milk, cow, buffalo)..."
+        [placeholder]="isAbsent() ? 'e.g. Went out of station, holiday...' : 'Add note (e.g. extra milk, cow, buffalo)...'"
         class="input-field" />
     </div>
 
     <!-- Save Button -->
     <button
       class="btn-save"
-      [disabled]="!session() || !quantity() || quantity()! <= 0"
+      [class.btn-save-absent]="isAbsent()"
+      [disabled]="!session() || (!isAbsent() && (!quantity() || quantity()! <= 0))"
       (click)="save()">
-      {{ isEditing() ? '✓ Update Record' : '✓ Save Record' }}
+      {{ isEditing() ? (isAbsent() ? '✓ Update as Absent' : '✓ Update Record') : (isAbsent() ? '✓ Mark as Absent' : '✓ Save Record') }}
     </button>
   </div>
 
@@ -125,7 +163,7 @@
     </div>
   }
 
-  <!-- Duplicate Record Dialog (Section 4 requirement) -->
+  <!-- Duplicate Record Dialog -->
   @if (showDuplicateDialog()) {
     <div class="overlay" (click)="cancelDuplicate()">
       <div class="dialog" (click)="$event.stopPropagation()">
@@ -135,7 +173,7 @@
           <strong>{{ session() }} record already exists. Edit existing record?</strong>
         </p>
         <div class="existing-summary">
-          Existing: {{ duplicateRecord()?.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ duplicateRecord()?.ratePerLitre }}
+          Existing: {{ duplicateRecord()?.isAbsent ? 'Absent (0 L)' : duplicateRecord()?.quantity + ' L × ' + (settings()?.currencySymbol || '₹') + duplicateRecord()?.ratePerLitre }}
           = <strong>{{ settings()?.currencySymbol || '₹' }}{{ duplicateRecord()?.amount }}</strong>
         </div>
         <div class="dialog-actions">

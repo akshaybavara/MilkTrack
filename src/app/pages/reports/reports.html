@@ -1,17 +1,47 @@
 <div class="reports-page">
   <div class="page-header">
-    <h2>📊 Monthly Summary</h2>
+    <h2>📊 Monthly Report</h2>
   </div>
 
   <!-- Month / Year Selector -->
   <div class="month-selector">
     <button class="nav-btn" (click)="prevMonth()" aria-label="Previous Month">◀</button>
     <span class="month-title">{{ monthLabel() }}</span>
-    <button class="nav-btn" (click)="nextMonth()" aria-label="Next Month">▶</button>
+    <button
+      class="nav-btn"
+      [disabled]="isNextMonthDisabled()"
+      [class.disabled]="isNextMonthDisabled()"
+      (click)="nextMonth()"
+      aria-label="Next Month">
+      ▶
+    </button>
   </div>
 
   @if (summary(); as s) {
-    <!-- Main Total Card -->
+    <!-- Quick Actions (PDF Export & WhatsApp Share) -->
+    <div class="actions-card">
+      <div class="actions-title">Report & Share</div>
+      <div class="report-action-buttons">
+        <button class="btn-action btn-pdf" (click)="downloadPdf()">
+          <span class="btn-icon">📄</span>
+          <span class="btn-text">Generate PDF</span>
+        </button>
+        <button class="btn-action btn-whatsapp" (click)="shareWhatsApp()">
+          <span class="btn-icon">📱</span>
+          <span class="btn-text">WhatsApp Share</span>
+        </button>
+      </div>
+      <div class="secondary-actions">
+        <button class="btn-sub-action" (click)="copyReportText()">
+          <span>📋</span> Copy Text
+        </button>
+        <button class="btn-sub-action" (click)="printReport()">
+          <span>🖨️</span> Print Report
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Total Hero Card -->
     <div class="summary-card hero-card">
       <div class="metric-block">
         <span class="metric-label">Total Milk</span>
@@ -19,19 +49,19 @@
       </div>
       <div class="metric-divider"></div>
       <div class="metric-block">
-        <span class="metric-label">Total Cost</span>
+        <span class="metric-label">Total Amount</span>
         <span class="metric-val big green">{{ settings()?.currencySymbol || '₹' }}{{ s.totalAmount.toLocaleString('en-IN') }}</span>
       </div>
     </div>
 
-    <!-- Session Breakdown Card -->
+    <!-- Summary Details Grid -->
     <div class="summary-card">
-      <div class="card-subtitle">Session Breakdown</div>
+      <div class="card-subtitle">Month Breakdown & Attendance</div>
 
       <div class="metric-row">
         <div class="row-left">
           <span class="session-icon">🌅</span>
-          <span class="row-label">Morning</span>
+          <span class="row-label">Morning Milk</span>
         </div>
         <span class="row-value">{{ s.morningQuantity }} L</span>
       </div>
@@ -39,36 +69,142 @@
       <div class="metric-row">
         <div class="row-left">
           <span class="session-icon">🌆</span>
-          <span class="row-label">Evening</span>
+          <span class="row-label">Evening Milk</span>
         </div>
         <span class="row-value">{{ s.eveningQuantity }} L</span>
       </div>
-    </div>
-
-    <!-- Daily Averages Card -->
-    <div class="summary-card">
-      <div class="card-subtitle">Daily Averages ({{ s.totalDays }} Days)</div>
 
       <div class="metric-row">
+        <div class="row-left">
+          <span class="session-icon">🚚</span>
+          <span class="row-label">Delivered Days</span>
+        </div>
+        <span class="row-value green">{{ s.deliveredDays }} days</span>
+      </div>
+
+      <div class="metric-row">
+        <div class="row-left">
+          <span class="session-icon">🚫</span>
+          <span class="row-label">Absent Days</span>
+        </div>
+        <span class="row-value red">{{ s.absentDays }} days</span>
+      </div>
+
+      <div class="metric-row highlight-cost">
         <span class="row-label">Average Per Day</span>
         <span class="row-value">{{ s.averagePerDay }} L</span>
       </div>
 
-      <div class="metric-row highlight-cost">
-        <span class="row-label">Average Daily Cost</span>
-        <span class="row-value green">{{ settings()?.currencySymbol || '₹' }}{{ s.averageDailyCost }}</span>
-      </div>
-
       <div class="metric-row subtle">
-        <span class="row-label">Days Recorded</span>
-        <span class="row-value">{{ s.recordedDays }} / {{ s.totalDays }} days</span>
+        <span class="row-label">Days In Report</span>
+        <span class="row-value">{{ s.totalDays }} days</span>
       </div>
     </div>
 
-    @if (s.totalQuantity === 0) {
+    <!-- Complete Month Day-by-Day Statement -->
+    @if (dayItems().length > 0) {
+      <div class="summary-card statement-card">
+        <div class="statement-header">
+          <div class="card-subtitle">Complete Month Statement</div>
+          <span class="count-badge">{{ dayItems().length }} Days</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Morning</th>
+                <th>Evening</th>
+                <th>Total</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of dayItems(); track item.dateStr) {
+                <tr [class.row-absent]="item.isAbsent" [class.row-empty]="item.totalQuantity === 0 && !item.isAbsent">
+                  <td class="col-date">
+                    <span class="day-d">{{ item.formattedDate }}</span>
+                    <span class="day-w">{{ item.dayOfWeek }}</span>
+                  </td>
+                  <td>
+                    @if (item.morning?.isAbsent || item.morning?.quantity === 0) {
+                      <span class="badge-absent-sm">Absent</span>
+                    } @else if (item.morning) {
+                      {{ item.morning.quantity }}L
+                    } @else {
+                      <span class="col-dash">-</span>
+                    }
+                  </td>
+                  <td>
+                    @if (item.evening?.isAbsent || item.evening?.quantity === 0) {
+                      <span class="badge-absent-sm">Absent</span>
+                    } @else if (item.evening) {
+                      {{ item.evening.quantity }}L
+                    } @else {
+                      <span class="col-dash">-</span>
+                    }
+                  </td>
+                  <td class="col-qty">
+                    @if (item.isAbsent) {
+                      0L
+                    } @else if (item.totalQuantity > 0) {
+                      <strong>{{ item.totalQuantity }}L</strong>
+                    } @else {
+                      <span class="col-dash">-</span>
+                    }
+                  </td>
+                  <td class="col-amt">
+                    @if (item.totalAmount > 0) {
+                      <span class="green-amt">{{ settings()?.currencySymbol || '₹' }}{{ item.totalAmount }}</span>
+                    } @else if (item.isAbsent) {
+                      <span class="col-dash">{{ settings()?.currencySymbol || '₹' }}0</span>
+                    } @else {
+                      <span class="col-dash">-</span>
+                    }
+                  </td>
+                  <td>
+                    @if (item.isAbsent) {
+                      <span class="badge-status-absent">🚫 Absent</span>
+                    } @else if (item.totalQuantity > 0) {
+                      <span class="badge-status-delivered">✓ {{ item.statusText }}</span>
+                    } @else {
+                      <span class="badge-status-none">Not Added</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="table-total-row">
+                <td colspan="3"><strong>Total ({{ monthLabel() }})</strong></td>
+                <td><strong>{{ s.totalQuantity }} L</strong></td>
+                <td><strong class="green-amt">{{ settings()?.currencySymbol || '₹' }}{{ s.totalAmount.toLocaleString('en-IN') }}</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    }
+
+    @if (s.totalQuantity === 0 && s.absentDays === 0) {
       <div class="empty-state">
         <p>No milk records found for {{ monthLabel() }}</p>
       </div>
     }
+
+    <!-- Developer Credit Footer -->
+    <div class="developer-credit-footer">
+      Developed by Akshay Kumar
+    </div>
+  }
+
+  <!-- Toast Notification -->
+  @if (showToast()) {
+    <div class="toast-popup">
+      {{ toastMessage() }}
+    </div>
   }
 </div>

@@ -68,6 +68,24 @@
   padding: 10px 0;
   border-bottom: 1px dashed #f1f5f9;
 
+  &.absent-row {
+    background: #fef2f2;
+    padding: 10px 8px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    border-bottom: none;
+
+    .absent-badge-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #dc2626;
+    }
+  }
+
+  .record-amount.zero {
+    color: #94a3b8;
+  }
+
   .session-info {
     display: flex;
     flex-direction: column;
@@ -159,6 +177,19 @@
   align-items: center;
   padding-top: 12px;
   margin-top: 4px;
+
+  &.day-absent-total {
+    .total-absent-label {
+      color: #dc2626;
+      font-weight: 700;
+      font-size: 13px;
+      margin-left: 6px;
+    }
+
+    .day-total-amount {
+      color: #94a3b8;
+    }
+  }
 
   .total-label {
     font-size: 14px;

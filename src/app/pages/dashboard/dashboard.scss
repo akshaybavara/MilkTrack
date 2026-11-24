@@ -121,6 +121,11 @@
     background: #ffffff;
   }
 
+  &.absent {
+    border-left-color: #ef4444;
+    background: #fffafa;
+  }
+
   &.missing {
     border-left-color: #f59e0b;
   }
@@ -156,13 +161,57 @@
     padding: 3px 10px;
     border-radius: 12px;
   }
+
+  .badge-absent {
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
 }
 
 .session-details {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+
+  &.absent-details {
+    justify-content: space-between;
+
+    .absent-info-text {
+      display: flex;
+      flex-direction: column;
+
+      .absent-tag {
+        font-size: 13px;
+        color: #dc2626;
+        font-weight: 600;
+      }
+    }
+
+    .session-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  .btn-session-edit {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 3px 7px;
+    font-size: 13px;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    &:active {
+      background: #e2e8f0;
+    }
+  }
 
   .check {
     color: #10b981;
@@ -210,12 +259,18 @@
     }
   }
 
+  .session-missing-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .btn-add-session {
     background: #fef3c7;
     color: #b45309;
     border: 1.5px solid #fde68a;
     border-radius: 14px;
-    padding: 9px 16px;
+    padding: 9px 14px;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
@@ -223,6 +278,23 @@
 
     &:active {
       background: #fde68a;
+      transform: scale(0.96);
+    }
+  }
+
+  .btn-absent-session {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1.5px solid #fca5a5;
+    border-radius: 14px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    &:active {
+      background: #fecaca;
       transform: scale(0.96);
     }
   }
@@ -235,6 +307,20 @@
   margin-top: 10px;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
   border: 1px solid #f1f5f9;
+
+  &.day-absent-card {
+    border-left: 6px solid #ef4444;
+  }
+
+  .absent-summary-note {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed #fca5a5;
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+  }
 
   .total-heading {
     font-size: 12px;

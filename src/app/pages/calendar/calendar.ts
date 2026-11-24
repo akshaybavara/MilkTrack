@@ -4,12 +4,12 @@ import { Router } from '@angular/router';
 import { DbService } from '../../services/db.service';
 import { Session, MilkRecord, AppSettings } from '../../models/milk-record.model';
 
-interface CalendarDay {
+export interface CalendarDay {
   date: number;
   dateStr: string;
   isCurrentMonth: boolean;
   isToday: boolean;
-  status: 'both' | 'partial' | 'none';
+  status: 'both' | 'partial' | 'absent' | 'none';
 }
 
 @Component({
@@ -31,12 +31,25 @@ export class CalendarComponent implements OnInit {
   settings = signal<AppSettings | null>(null);
   showDetail = signal<boolean>(false);
 
+  // Restrict navigation to upcoming/future months
+  isNextMonthDisabled = computed(() => {
+    const today = new Date();
+    const y = this.currentYear();
+    const m = this.currentMonth();
+    return y > today.getFullYear() || (y === today.getFullYear() && m >= today.getMonth());
+  });
+
   hasMorning = computed(() => {
     return this.selectedRecords().some(r => r.session === 'Morning');
   });
 
   hasEvening = computed(() => {
     return this.selectedRecords().some(r => r.session === 'Evening');
+  });
+
+  isDayAllAbsent = computed(() => {
+    const recs = this.selectedRecords();
+    return recs.length > 0 && recs.every(r => r.isAbsent || r.quantity === 0);
   });
 
   dayTotalQuantity = computed(() => {
@@ -64,14 +77,25 @@ export class CalendarComponent implements OnInit {
       year: 'numeric'
     }));
 
-    // Get recorded dates map
-    const recordedDates = await this.db.getRecordedDatesForMonth(year, month + 1);
+    // Get records map for this month
+    const recordsMap = await this.db.getRecordsMapByMonth(year, month + 1);
 
     const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const todayYear = today.getFullYear();
+    const todayMonth = today.getMonth();
+    const todayDate = today.getDate();
+    const todayStr = `${todayYear}-${String(todayMonth + 1).padStart(2, '0')}-${String(todayDate).padStart(2, '0')}`;
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Do not show upcoming dates: only show till today for current month
+    let maxDay = daysInMonth;
+    if (year === todayYear && month === todayMonth) {
+      maxDay = todayDate;
+    } else if (year > todayYear || (year === todayYear && month > todayMonth)) {
+      maxDay = 0;
+    }
 
     const days: CalendarDay[] = [];
 
@@ -80,13 +104,19 @@ export class CalendarComponent implements OnInit {
       days.push({ date: 0, dateStr: '', isCurrentMonth: false, isToday: false, status: 'none' });
     }
 
-    for (let d = 1; d <= daysInMonth; d++) {
+    // Only generate dates up to today (do not show upcoming dates)
+    for (let d = 1; d <= maxDay; d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      const sessions = recordedDates.get(dateStr) || [];
-      let status: 'both' | 'partial' | 'none' = 'none';
-      if (sessions.length >= 2) {
+      const recs = recordsMap.get(dateStr) || [];
+      let status: 'both' | 'partial' | 'absent' | 'none' = 'none';
+
+      if (recs.length === 0) {
+        status = 'none';
+      } else if (recs.every(r => r.isAbsent || r.quantity === 0)) {
+        status = 'absent';
+      } else if (recs.length >= 2) {
         status = 'both';
-      } else if (sessions.length === 1) {
+      } else {
         status = 'partial';
       }
 
@@ -117,6 +147,8 @@ export class CalendarComponent implements OnInit {
   }
 
   async nextMonth() {
+    if (this.isNextMonthDisabled()) return;
+
     let m = this.currentMonth();
     let y = this.currentYear();
     if (m === 11) {
@@ -133,9 +165,13 @@ export class CalendarComponent implements OnInit {
   async selectDay(day: CalendarDay) {
     if (!day.isCurrentMonth || day.date === 0) return;
     this.selectedDate.set(day.dateStr);
-    const records = await this.db.getRecordsByDate(day.dateStr);
-    this.selectedRecords.set(records);
+    await this.loadDayRecords(day.dateStr);
     this.showDetail.set(true);
+  }
+
+  async loadDayRecords(dateStr: string) {
+    const records = await this.db.getRecordsByDate(dateStr);
+    this.selectedRecords.set(records);
   }
 
   closeDetail() {
@@ -146,6 +182,32 @@ export class CalendarComponent implements OnInit {
     this.router.navigate(['/add'], {
       queryParams: { date: this.selectedDate(), session }
     });
+  }
+
+  async markSessionAbsent(session: Session) {
+    const d = this.selectedDate();
+    if (!d) return;
+    await this.db.markAbsent(d, session, 'Absent');
+    await this.loadDayRecords(d);
+    await this.buildCalendar();
+  }
+
+  async markDayAbsent() {
+    const d = this.selectedDate();
+    if (!d) return;
+    await this.db.markDayAbsent(d, 'Absent');
+    await this.loadDayRecords(d);
+    await this.buildCalendar();
+  }
+
+  async deleteRecord(record: MilkRecord) {
+    if (!record.id) return;
+    await this.db.deleteRecord(record.id);
+    const d = this.selectedDate();
+    if (d) {
+      await this.loadDayRecords(d);
+    }
+    await this.buildCalendar();
   }
 
   editRecord(record: MilkRecord) {

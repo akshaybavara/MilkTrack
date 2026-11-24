@@ -19,12 +19,16 @@
 
       <!-- Morning Session Row -->
       @if (day.morning) {
-        <div class="record-row">
+        <div class="record-row" [class.absent-row]="day.morning.isAbsent || day.morning.quantity === 0">
           <div class="session-info">
             <span class="session-label">Morning</span>
-            <span class="calc-detail">{{ day.morning.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ day.morning.ratePerLitre }}</span>
+            @if (day.morning.isAbsent || day.morning.quantity === 0) {
+              <span class="absent-badge-text">🚫 Absent (No Milk)</span>
+            } @else {
+              <span class="calc-detail">{{ day.morning.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ day.morning.ratePerLitre }}</span>
+            }
           </div>
-          <span class="record-amount">{{ settings()?.currencySymbol || '₹' }}{{ day.morning.amount }}</span>
+          <span class="record-amount" [class.zero]="day.morning.amount === 0">{{ settings()?.currencySymbol || '₹' }}{{ day.morning.amount }}</span>
           <div class="record-actions">
             <button class="btn-icon" (click)="editRecord(day.morning)" aria-label="Edit Morning Record">✏️</button>
             <button class="btn-icon" (click)="confirmDelete(day.morning)" aria-label="Delete Morning Record">🗑️</button>
@@ -39,12 +43,16 @@
 
       <!-- Evening Session Row -->
       @if (day.evening) {
-        <div class="record-row">
+        <div class="record-row" [class.absent-row]="day.evening.isAbsent || day.evening.quantity === 0">
           <div class="session-info">
             <span class="session-label">Evening</span>
-            <span class="calc-detail">{{ day.evening.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ day.evening.ratePerLitre }}</span>
+            @if (day.evening.isAbsent || day.evening.quantity === 0) {
+              <span class="absent-badge-text">🚫 Absent (No Milk)</span>
+            } @else {
+              <span class="calc-detail">{{ day.evening.quantity }} L × {{ settings()?.currencySymbol || '₹' }}{{ day.evening.ratePerLitre }}</span>
+            }
           </div>
-          <span class="record-amount">{{ settings()?.currencySymbol || '₹' }}{{ day.evening.amount }}</span>
+          <span class="record-amount" [class.zero]="day.evening.amount === 0">{{ settings()?.currencySymbol || '₹' }}{{ day.evening.amount }}</span>
           <div class="record-actions">
             <button class="btn-icon" (click)="editRecord(day.evening)" aria-label="Edit Evening Record">✏️</button>
             <button class="btn-icon" (click)="confirmDelete(day.evening)" aria-label="Delete Evening Record">🗑️</button>
@@ -58,8 +66,13 @@
       }
 
       <!-- Day Total -->
-      <div class="day-total">
-        <span class="total-label">Total: <strong>{{ day.totalQuantity }} L</strong></span>
+      <div class="day-total" [class.day-absent-total]="day.isAbsent">
+        <span class="total-label">
+          Total: <strong>{{ day.totalQuantity }} L</strong>
+          @if (day.isAbsent) {
+            <span class="total-absent-label">(Absent)</span>
+          }
+        </span>
         <span class="day-total-amount">{{ settings()?.currencySymbol || '₹' }}{{ day.totalAmount }}</span>
       </div>
     </div>
