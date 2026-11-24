@@ -388,6 +388,17 @@ async function runTests() {
   assert(displayPeriodTest === 'November 2026', 'PDF header displays "November 2026" with only one time year');
   assert(pdfServiceSrc.includes('data.monthName.includes(String(data.year))'), 'PdfReportService prevents duplicate year display');
 
+  // Test 18: Quote of the Day in Hindi on Home Page
+  console.log('\n--- 18. Quote of the Day in Hindi ---');
+  const dashboardSrc = fs.readFileSync('src/app/pages/dashboard/dashboard.ts', 'utf8');
+  assert(dashboardSrc.includes('HINDI_QUOTES'), 'Dashboard contains Hindi quotes collection');
+  assert(dashboardSrc.includes('स्वास्थ्य ही सबसे बड़ा धन है'), 'Dashboard contains inspiring Hindi quote');
+  assert(dashboardSrc.includes('refreshQuote()'), 'Dashboard provides refreshQuote method to cycle quotes');
+
+  const dashboardHtml = fs.readFileSync('src/app/pages/dashboard/dashboard.html', 'utf8');
+  assert(dashboardHtml.includes('quote-card'), 'Dashboard template renders quote card');
+  assert(dashboardHtml.includes('आज का सुविचार'), 'Dashboard template displays "आज का सुविचार" badge');
+
   console.log('\n==============================================');
   console.log(`Summary: ${passCount} Passed, ${failCount} Failed`);
   console.log('==============================================');

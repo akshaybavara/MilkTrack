@@ -69,6 +69,99 @@
   }
 }
 
+// ─── Quote of the Day in Hindi ──────────────
+.quote-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 12px rgba(217, 119, 6, 0.08);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "”";
+    position: absolute;
+    right: 10px;
+    bottom: -15px;
+    font-size: 80px;
+    font-family: Georgia, serif;
+    color: rgba(217, 119, 6, 0.08);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .quote-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .quote-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .quote-icon {
+        font-size: 14px;
+      }
+
+      .quote-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: #b45309;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .btn-refresh-quote {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #fde68a;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      color: #92400e;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: #ffffff;
+        transform: rotate(45deg);
+      }
+
+      &:active {
+        transform: rotate(180deg) scale(0.92);
+      }
+    }
+  }
+
+  .quote-text {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #451a03;
+    font-weight: 600;
+    margin: 0 0 6px;
+    font-style: italic;
+  }
+
+  .quote-author-row {
+    text-align: right;
+
+    .quote-author {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #b45309;
+    }
+  }
+}
+
 .primary-action-container {
   margin-bottom: 20px;
 

@@ -13,6 +13,25 @@
     <h2>{{ todayFormatted() }}</h2>
   </div>
 
+  <!-- Hindi Quote of the Day (आज का सुविचार) -->
+  <div class="quote-card">
+    <div class="quote-header">
+      <div class="quote-badge">
+        <span class="quote-icon">🌸</span>
+        <span class="quote-title">आज का सुविचार</span>
+      </div>
+      <button class="btn-refresh-quote" (click)="refreshQuote()" aria-label="Next Quote" title="नया सुविचार देखें">
+        🔄
+      </button>
+    </div>
+    <p class="quote-text">“{{ currentQuote().text }}”</p>
+    @if (currentQuote().author) {
+      <div class="quote-author-row">
+        <span class="quote-author">— {{ currentQuote().author }}</span>
+      </div>
+    }
+  </div>
+
   <!-- Primary Large + Add Milk Button -->
   <div class="primary-action-container">
     <button class="btn-main-add" (click)="addMilk()">
