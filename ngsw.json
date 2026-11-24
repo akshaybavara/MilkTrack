@@ -1,0 +1,91 @@
+{
+  "configVersion": 1,
+  "timestamp": 1795498192719,
+  "index": "/MilkTrack/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/MilkTrack/favicon.ico",
+        "/MilkTrack/index.html",
+        "/MilkTrack/main-KMUJA6P5.js",
+        "/MilkTrack/manifest.webmanifest",
+        "/MilkTrack/styles-W72SQ6PX.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/MilkTrack/favicon.png",
+        "/MilkTrack/icons/icon-128x128.png",
+        "/MilkTrack/icons/icon-144x144.png",
+        "/MilkTrack/icons/icon-152x152.png",
+        "/MilkTrack/icons/icon-180x180.png",
+        "/MilkTrack/icons/icon-192x192.png",
+        "/MilkTrack/icons/icon-384x384.png",
+        "/MilkTrack/icons/icon-512x512.png",
+        "/MilkTrack/icons/icon-72x72.png",
+        "/MilkTrack/icons/icon-96x96.png",
+        "/MilkTrack/icons/icon-maskable-192x192.png",
+        "/MilkTrack/icons/icon-maskable-512x512.png",
+        "/MilkTrack/icons/logo-maskable.svg",
+        "/MilkTrack/icons/logo.svg",
+        "/MilkTrack/logo.svg"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/MilkTrack/favicon.ico": "83ddf250ceb9b61018a7b4a49fccc13c0b23cf83",
+    "/MilkTrack/favicon.png": "fd5b418a814ffb742fcb367fcec7e85bc4b74d3e",
+    "/MilkTrack/icons/icon-128x128.png": "6d4ebf9b7e3cc000f4ffd4d1895b1a7f7a539de0",
+    "/MilkTrack/icons/icon-144x144.png": "0b1f45a24aa59c5cd3f089576507099a9a246902",
+    "/MilkTrack/icons/icon-152x152.png": "39477bab28202ccb0c8777bbc3db4da8a7c7f77d",
+    "/MilkTrack/icons/icon-180x180.png": "b6c024c655f10184d72f28a0e84a74d06c53f3df",
+    "/MilkTrack/icons/icon-192x192.png": "27340b380c05210d495c21c6e1a91ad46ce335e8",
+    "/MilkTrack/icons/icon-384x384.png": "144ebe5f09e28605f051528d0a5b40fc284d540f",
+    "/MilkTrack/icons/icon-512x512.png": "6948d3b6a2f9f91287c9ce1a1161afaad2660235",
+    "/MilkTrack/icons/icon-72x72.png": "b9ff5fe7a76310e6a124abaaadc0d03e80afd192",
+    "/MilkTrack/icons/icon-96x96.png": "11cea244e1bad2b15e61fc1e21587490e98a7016",
+    "/MilkTrack/icons/icon-maskable-192x192.png": "fb836a87e68035fda66ac40a362b590b4cc62505",
+    "/MilkTrack/icons/icon-maskable-512x512.png": "9c3ac651a1d3141e6469f46af6108ef22abcccb6",
+    "/MilkTrack/icons/logo-maskable.svg": "d38c99774123d88144313a45ff718beb3188262f",
+    "/MilkTrack/icons/logo.svg": "7d4b347b080b72a8410ae22b57060b9a3c96d10f",
+    "/MilkTrack/index.html": "cc03ab677c965f0624a28689862abafd755046cb",
+    "/MilkTrack/logo.svg": "7d4b347b080b72a8410ae22b57060b9a3c96d10f",
+    "/MilkTrack/main-KMUJA6P5.js": "79aee9c5909b6591583cd8cb31bd0ebb161e7913",
+    "/MilkTrack/manifest.webmanifest": "171666cc39e5ed9cacd7d85b9308c670d61b8f4f",
+    "/MilkTrack/styles-W72SQ6PX.css": "6ce69aa6c0b1ce929d7f48451fdddab6d41b43fa"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
