@@ -19,15 +19,23 @@
       <div class="quote-badge">
         <span class="quote-icon">🌸</span>
         <span class="quote-title">आज का सुविचार</span>
+        @if (quoteService.currentQuote().source === 'online') {
+          <span class="badge-online" title="इंटरनेट से अपडेटेड">🌐 लाइव</span>
+        }
       </div>
-      <button class="btn-refresh-quote" (click)="refreshQuote()" aria-label="Next Quote" title="नया सुविचार देखें">
+      <button
+        class="btn-refresh-quote"
+        [class.spinning]="quoteService.isRefreshing()"
+        (click)="quoteService.refreshQuote()"
+        aria-label="Next Quote"
+        title="नया सुविचार देखें">
         🔄
       </button>
     </div>
-    <p class="quote-text">“{{ currentQuote().text }}”</p>
-    @if (currentQuote().author) {
+    <p class="quote-text">“{{ quoteService.currentQuote().text }}”</p>
+    @if (quoteService.currentQuote().author) {
       <div class="quote-author-row">
-        <span class="quote-author">— {{ currentQuote().author }}</span>
+        <span class="quote-author">— {{ quoteService.currentQuote().author }}</span>
       </div>
     }
   </div>

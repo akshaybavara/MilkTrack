@@ -388,16 +388,24 @@ async function runTests() {
   assert(displayPeriodTest === 'November 2026', 'PDF header displays "November 2026" with only one time year');
   assert(pdfServiceSrc.includes('data.monthName.includes(String(data.year))'), 'PdfReportService prevents duplicate year display');
 
-  // Test 18: Quote of the Day in Hindi on Home Page
-  console.log('\n--- 18. Quote of the Day in Hindi ---');
+  // Test 18: Quote of the Day in Hindi with Internet Daily Update
+  console.log('\n--- 18. Quote of the Day in Hindi (Daily Internet Update) ---');
+  const quoteServiceSrc = fs.readFileSync('src/app/services/quote.service.ts', 'utf8');
+  assert(quoteServiceSrc.includes('HINDI_OFFLINE_QUOTES'), 'QuoteService contains curated offline quotes');
+  assert(quoteServiceSrc.includes('fetchOnlineQuote()'), 'QuoteService implements fetchOnlineQuote for internet updates');
+  assert(quoteServiceSrc.includes('window.addEventListener(\'online\''), 'QuoteService listens to online events to update quote');
+  assert(quoteServiceSrc.includes('initDailyQuote()'), 'QuoteService provides initDailyQuote for daily checks');
+  assert(quoteServiceSrc.includes('localStorage'), 'QuoteService caches daily quote in local storage');
+
   const dashboardSrc = fs.readFileSync('src/app/pages/dashboard/dashboard.ts', 'utf8');
-  assert(dashboardSrc.includes('HINDI_QUOTES'), 'Dashboard contains Hindi quotes collection');
-  assert(dashboardSrc.includes('स्वास्थ्य ही सबसे बड़ा धन है'), 'Dashboard contains inspiring Hindi quote');
-  assert(dashboardSrc.includes('refreshQuote()'), 'Dashboard provides refreshQuote method to cycle quotes');
+  assert(dashboardSrc.includes('quoteService: QuoteService'), 'DashboardComponent injects QuoteService');
+  assert(dashboardSrc.includes('this.quoteService.initDailyQuote()'), 'DashboardComponent initializes daily quote on startup');
 
   const dashboardHtml = fs.readFileSync('src/app/pages/dashboard/dashboard.html', 'utf8');
   assert(dashboardHtml.includes('quote-card'), 'Dashboard template renders quote card');
   assert(dashboardHtml.includes('आज का सुविचार'), 'Dashboard template displays "आज का सुविचार" badge');
+  assert(dashboardHtml.includes('quoteService.currentQuote().text'), 'Dashboard template binds to dynamic quoteService.currentQuote');
+  assert(dashboardHtml.includes('badge-online'), 'Dashboard template renders live online indicator when connected');
 
   console.log('\n==============================================');
   console.log(`Summary: ${passCount} Passed, ${failCount} Failed`);

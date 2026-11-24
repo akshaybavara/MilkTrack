@@ -114,6 +114,16 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
+
+      .badge-online {
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 6px;
+        border: 1px solid #bbf7d0;
+      }
     }
 
     .btn-refresh-quote {
@@ -139,6 +149,10 @@
       &:active {
         transform: rotate(180deg) scale(0.92);
       }
+
+      &.spinning {
+        animation: quoteSpin 0.7s linear infinite;
+      }
     }
   }
 
@@ -160,6 +174,11 @@
       color: #b45309;
     }
   }
+}
+
+@keyframes quoteSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .primary-action-container {
