@@ -407,6 +407,38 @@ async function runTests() {
   assert(dashboardHtml.includes('quoteService.currentQuote().text'), 'Dashboard template binds to dynamic quoteService.currentQuote');
   assert(dashboardHtml.includes('badge-online'), 'Dashboard template renders live online indicator when connected');
 
+  // Test 19: Top 10 News Left-to-Right Carousel & Redirects
+  console.log('\n--- 19. Top 10 News Carousel & Full News Redirects ---');
+  const newsServiceSrc = fs.readFileSync('src/app/services/news.service.ts', 'utf8');
+  assert(newsServiceSrc.includes('export interface NewsItem'), 'NewsService exports NewsItem interface');
+  assert(newsServiceSrc.includes('FALLBACK_TOP_NEWS: NewsItem[]'), 'NewsService exports FALLBACK_TOP_NEWS for offline PWA capability');
+  assert(newsServiceSrc.includes('slice(0, 10)'), 'NewsService restricts news items strictly to top 10');
+  assert(newsServiceSrc.includes('loadTopNews'), 'NewsService implements loadTopNews');
+  assert(newsServiceSrc.includes('timesofindia.indiatimes.com'), 'NewsService fetches top stories from official news RSS');
+  assert(newsServiceSrc.includes('localStorage'), 'NewsService caches news in localStorage');
+  assert(newsServiceSrc.includes('window.addEventListener(\'online\''), 'NewsService refreshes when reconnected to internet');
+
+  // Verify dashboard integration
+  assert(dashboardSrc.includes('newsService: NewsService'), 'DashboardComponent injects NewsService');
+  assert(dashboardSrc.includes('this.newsService.loadTopNews()'), 'DashboardComponent loads top news on initialization');
+  assert(dashboardSrc.includes('scrollNews(direction: \'left\' | \'right\')'), 'DashboardComponent implements carousel scrolling');
+
+  // Verify template markup
+  assert(dashboardHtml.includes('class="news-section"'), 'Dashboard template has news-section at bottom of page');
+  assert(dashboardHtml.includes('Top 10 News'), 'Dashboard template displays "Top 10 News" section header');
+  assert(dashboardHtml.includes('class="news-live-pulse"'), 'Dashboard template displays LIVE indicator');
+  assert(dashboardHtml.includes('class="news-carousel" #newsCarousel'), 'Dashboard template has horizontal scroll carousel #newsCarousel');
+  assert(dashboardHtml.includes('scrollNews(\'left\')') && dashboardHtml.includes('scrollNews(\'right\')'), 'Dashboard template has left and right carousel scroll controls');
+  assert(dashboardHtml.includes('target="_blank"') && dashboardHtml.includes('rel="noopener noreferrer"'), 'News links open official full news in new tab');
+  assert(dashboardHtml.includes('Read Full News'), 'News items show "Read Full News" redirection text');
+  assert(dashboardHtml.includes('#{{ idx + 1 }}'), 'News items render rank badges #1 through #10');
+
+  // Verify SCSS styling
+  const dashboardScss = fs.readFileSync('src/app/pages/dashboard/dashboard.scss', 'utf8');
+  assert(dashboardScss.includes('.news-section'), 'Dashboard SCSS defines .news-section styling');
+  assert(dashboardScss.includes('scroll-snap-type: x mandatory'), 'News carousel supports smooth horizontal snap scrolling');
+  assert(dashboardScss.includes('overflow-x: auto'), 'News carousel allows left-to-right horizontal scrolling');
+
   console.log('\n==============================================');
   console.log(`Summary: ${passCount} Passed, ${failCount} Failed`);
   console.log('==============================================');

@@ -174,4 +174,52 @@
       }
     </div>
   }
+
+  <!-- Top 10 News Left-to-Right Carousel (Bottom of the page) -->
+  <div class="news-section">
+    <div class="news-header">
+      <div class="news-title-group">
+        <span class="news-icon">📰</span>
+        <span class="news-section-title">Top 10 News</span>
+        <span class="news-live-pulse" title="Live Headlines">LIVE</span>
+      </div>
+      <div class="carousel-nav-btns">
+        <button class="btn-scroll" (click)="scrollNews('left')" aria-label="Scroll left">‹</button>
+        <button class="btn-scroll" (click)="scrollNews('right')" aria-label="Scroll right">›</button>
+      </div>
+    </div>
+
+    <div class="news-carousel" #newsCarousel>
+      @for (item of newsService.newsList(); track item.id; let idx = $index) {
+        <a
+          [href]="item.link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="news-card"
+          [attr.aria-label]="item.title">
+          <div class="news-card-thumb">
+            @if (item.image) {
+              <img [src]="item.image" [alt]="item.title" loading="lazy" (error)="onImageError($event)" />
+            } @else {
+              <div class="news-placeholder-img">📰</div>
+            }
+            <span class="news-rank-badge">#{{ idx + 1 }}</span>
+          </div>
+          <div class="news-card-content">
+            <div class="news-meta">
+              <span class="news-source">{{ item.source }}</span>
+              @if (item.timeAgo) {
+                <span class="news-time">{{ item.timeAgo }}</span>
+              }
+            </div>
+            <h4 class="news-headline">{{ item.title }}</h4>
+            <div class="news-read-more">
+              <span>Read Full News</span>
+              <span class="arrow-icon">↗</span>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
 </div>

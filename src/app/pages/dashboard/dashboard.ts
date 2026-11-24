@@ -1,9 +1,10 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DbService } from '../../services/db.service';
 import { MilkRecord, AppSettings, Session } from '../../models/milk-record.model';
 import { QuoteService } from '../../services/quote.service';
+import { NewsService } from '../../services/news.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,6 +14,8 @@ import { QuoteService } from '../../services/quote.service';
   styleUrl: './dashboard.scss'
 })
 export class DashboardComponent implements OnInit {
+  @ViewChild('newsCarousel') newsCarousel?: ElementRef<HTMLDivElement>;
+
   today = signal('');
   todayFormatted = signal('');
   morningRecord = signal<MilkRecord | null>(null);
@@ -43,7 +46,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private db: DbService,
     private router: Router,
-    public quoteService: QuoteService
+    public quoteService: QuoteService,
+    public newsService: NewsService
   ) {}
 
   async ngOnInit() {
@@ -52,8 +56,9 @@ export class DashboardComponent implements OnInit {
     this.today.set(dateStr);
     this.todayFormatted.set(this.formatDateDisplay(now));
 
-    // Initialize daily quote (fetches fresh online if connected to internet, or loads cached/offline)
+    // Initialize daily quote & top 10 news
     await this.quoteService.initDailyQuote();
+    await this.newsService.loadTopNews();
 
     await this.loadData();
   }
@@ -84,6 +89,18 @@ export class DashboardComponent implements OnInit {
 
   editRecord(record: MilkRecord) {
     this.router.navigate(['/add'], { queryParams: { editId: record.id } });
+  }
+
+  scrollNews(direction: 'left' | 'right') {
+    const el = this.newsCarousel?.nativeElement;
+    if (!el) return;
+    const scrollAmount = direction === 'left' ? -260 : 260;
+    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  }
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
   }
 
   private formatDateKey(d: Date): string {
